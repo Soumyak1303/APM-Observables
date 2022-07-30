@@ -15,12 +15,13 @@ export class ProductListComponent {
   errorMessage = '';
   categories: ProductCategory[] = [];
 
-  products$: Observable<Product[]> = this.productService.products$.pipe(
-    catchError((err) => {
-      this.errorMessage = err;
-      return EMPTY; // Or of([]);
-    })
-  );
+  products$: Observable<Product[]> =
+    this.productService.productsWithCategory$.pipe(
+      catchError((err) => {
+        this.errorMessage = err;
+        return EMPTY; // Or of([]);
+      })
+    );
 
   constructor(private productService: ProductService) {}
 
