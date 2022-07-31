@@ -1,18 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  EMPTY,
-  map,
-  Observable,
-  startWith,
-  Subject,
-} from 'rxjs';
-import { ProductCategory } from '../product-categories/product-category';
+import { BehaviorSubject, catchError, combineLatest, EMPTY, map } from 'rxjs';
 import { ProductCategoryService } from '../product-categories/product-category.service';
-
-import { Product } from './product';
 import { ProductService } from './product.service';
 
 @Component({
@@ -28,8 +16,8 @@ export class ProductListComponent {
   categorySelectedAction$ = this.categorySelectedSubject.asObservable();
 
   products$ = combineLatest([
-    this.productService.productsWithCategory$,
-    this.categorySelectedAction$//.pipe(startWith(0)), --> alternate of behavior subeject
+    this.productService.productsWithAdd$,
+    this.categorySelectedAction$, //.pipe(startWith(0)), --> alternate of behavior subeject
   ]).pipe(
     map(([products, selectedCategoryId]) =>
       products.filter((product) =>
@@ -55,7 +43,7 @@ export class ProductListComponent {
   ) {}
 
   onAdd(): void {
-    console.log('Not yet implemented');
+    this.productService.addProduct();
   }
 
   onSelected(categoryId: string): void {
