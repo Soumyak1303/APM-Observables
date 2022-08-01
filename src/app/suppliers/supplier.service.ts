@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { throwError, Observable, of, map, tap, concatMap } from 'rxjs';
+import {
+  throwError,
+  Observable,
+  of,
+  map,
+  tap,
+  concatMap,
+  mergeMap,
+} from 'rxjs';
 import { Supplier } from './supplier';
 
 @Injectable({
@@ -11,15 +19,26 @@ export class SupplierService {
   suppliersUrl = 'api/suppliers';
 
   supplierWithMap$ = of(1, 5, 8).pipe(
-    // map((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
+    map((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
+  );
+
+  supplierWithConcatMap$ = of(1, 5, 8).pipe(
     tap((id) => console.log(`concatmap o/p obs: ${id}`)),
     concatMap((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
   );
 
+  supplierWithMergeMap$ = of(1, 5, 8).pipe(
+    tap((id) => console.log(`mergemap o/p obs: ${id}`)),
+    mergeMap((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
+  );
+
   constructor(private http: HttpClient) {
-    this.supplierWithMap$.subscribe((item) =>
+    this.supplierWithConcatMap$.subscribe((item) =>
       console.log(`concatMap res: `, item)
     );
+    this.supplierWithMergeMap$.subscribe((item) =>
+    console.log(`mergeMap res: `, item)
+  );
 
     // this.supplierWithMap$.subscribe(
     //   (osub) => osub.subscribe((item) => console.log(`map result:`, item)) //example of inner and outter subscribe --> HOO
