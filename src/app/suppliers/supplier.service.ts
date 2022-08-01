@@ -10,6 +10,8 @@ import {
   concatMap,
   mergeMap,
   switchMap,
+  shareReplay,
+  catchError,
 } from 'rxjs';
 import { Supplier } from './supplier';
 
@@ -19,9 +21,9 @@ import { Supplier } from './supplier';
 export class SupplierService {
   suppliersUrl = 'api/suppliers';
 
-  supplierWithMap$ = of(1, 5, 8).pipe(
-    map((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
-  );
+  // supplierWithMap$ = of(1, 5, 8).pipe(
+  //   map((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
+  // );
 
   // supplierWithConcatMap$ = of(1, 5, 8).pipe(
   //   tap((id) => console.log(`concatmap o/p obs: ${id}`)),
@@ -37,6 +39,11 @@ export class SupplierService {
   //   tap((id) => console.log(`switchmap o/p obs: ${id}`)),
   //   switchMap((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
   // );
+  suppliers$ = this.http.get<Supplier[]>(this.suppliersUrl).pipe(
+    tap((data) => console.log(`suppliers: ${JSON.stringify(data)}`)),
+    shareReplay(1),
+    catchError(this.handleError)
+  );
 
   constructor(private http: HttpClient) {
     // this.supplierWithConcatMap$.subscribe((item) =>
@@ -45,11 +52,9 @@ export class SupplierService {
     // this.supplierWithMergeMap$.subscribe((item) =>
     //   console.log(`mergeMap res: `, item)
     // );
-
     // this.supplierWithSwitchMap$.subscribe((item) =>
     //   console.log(`switchMap res: `, item)
     // );
-
     // this.supplierWithMap$.subscribe(
     //   (osub) => osub.subscribe((item) => console.log(`map result:`, item)) //example of inner and outter subscribe --> HOO
     // );
