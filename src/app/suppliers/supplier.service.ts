@@ -9,6 +9,7 @@ import {
   tap,
   concatMap,
   mergeMap,
+  switchMap,
 } from 'rxjs';
 import { Supplier } from './supplier';
 
@@ -32,13 +33,22 @@ export class SupplierService {
     mergeMap((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
   );
 
+  supplierWithSwitchMap$ = of(1, 5, 8).pipe(
+    tap((id) => console.log(`switchmap o/p obs: ${id}`)),
+    switchMap((id) => this.http.get<Supplier>(`${this.suppliersUrl}/${id}`))
+  );
+
   constructor(private http: HttpClient) {
     this.supplierWithConcatMap$.subscribe((item) =>
       console.log(`concatMap res: `, item)
     );
     this.supplierWithMergeMap$.subscribe((item) =>
-    console.log(`mergeMap res: `, item)
-  );
+      console.log(`mergeMap res: `, item)
+    );
+
+    this.supplierWithSwitchMap$.subscribe((item) =>
+      console.log(`switchMap res: `, item)
+    );
 
     // this.supplierWithMap$.subscribe(
     //   (osub) => osub.subscribe((item) => console.log(`map result:`, item)) //example of inner and outter subscribe --> HOO
